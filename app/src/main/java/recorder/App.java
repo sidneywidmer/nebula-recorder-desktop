@@ -1,38 +1,37 @@
 package recorder;
 
+import com.google.inject.Guice;
 import javafx.application.Application;
-import javafx.geometry.Insets;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import recorder.providers.Bootstrap;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 
 public class App extends Application {
 
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Initialize DI
+        var injector = Guice.createInjector(new Bootstrap());
+        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+
+        // To start, show the login screen
+        try (InputStream fxmlInputStream = ClassLoader.getSystemResourceAsStream("recorder/login.fxml")) {
+            Parent parent = loader.load(fxmlInputStream);
+            stage.setScene(new Scene(parent));
+            stage.show();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
+        // 3..2..1.. LIFTOFF!
         launch(args);
     }
-
-    @Override
-    public void start(Stage stage) {
-        setupGui(stage);
-    }
-
-
-    /**
-     * Setup the main Recorder GUI window with all the basic controls.
-     */
-    protected void setupGui(Stage stage) {
-        Button button = new Button("select recording area");
-        button.setOnAction(event -> new RecordingArea(App.this));
-
-        VBox layout = new VBox(10);
-        layout.getChildren().setAll(button);
-        layout.setPadding(new Insets(10));
-
-        stage.setScene(new Scene(layout, 160, 100));
-        stage.show();
-    }
-
-
 }

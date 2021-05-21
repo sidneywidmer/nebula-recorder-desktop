@@ -6,3 +6,4 @@ build
 
 # Other
 .idea
+/app/src/main/resources/app.conf

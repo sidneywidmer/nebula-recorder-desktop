@@ -1,4 +1,4 @@
-package recorder;
+package recorder.backup;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane fx:id="login" prefHeight="300.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="recorder.controllers.MainController">
+    <children>
+        <Text layoutX="36.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Yay, logged in!"/>
+    </children>
+</AnchorPane>
