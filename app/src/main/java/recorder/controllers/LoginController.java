@@ -5,21 +5,19 @@ import com.google.inject.Inject;
 import com.typesafe.config.Config;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import org.json.JSONObject;
+import recorder.core.Loader;
+import recorder.core.NebulaApi;
 
 import java.io.IOException;
 
 public class LoginController {
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private final Config config;
+    private final Loader loader;
+    private final NebulaApi nebulaApi;
 
     @FXML
     private AnchorPane login;
@@ -31,26 +29,19 @@ public class LoginController {
     private TextField password;
 
     @Inject
-    public LoginController(Config config) {
+    public LoginController(Config config, Loader loader, NebulaApi nebulaApi) {
         this.config = config;
+        this.loader = loader;
+        this.nebulaApi = nebulaApi;
     }
 
     /**
-     * Login to our service, save the jwt token and show the main view.
+     * Login to our service, save the jwt token and show the main view on success
+     * and an error message if anything else than a 200 code is returned.
      */
     public void login(ActionEvent event) throws IOException {
-        var client = new OkHttpClient().newBuilder().build();
-
-        var payload = new JSONObject()
-                .put("email", email.getText())
-                .put("password", password.getText());
-
-        var body = RequestBody.create(payload.toString(), JSON);
-        var request = new Request.Builder()
-                .url("http://localhost:8000/api/auth/login")
-                .post(body)
-                .build();
-        var response = client.newCall(request).execute();
+        var payload = new JSONObject().put("email", email.getText()).put("password", password.getText());
+        var response = nebulaApi.login(payload);
 
         if (response.code() != 200) {
             error.setVisible(true);
@@ -60,8 +51,6 @@ public class LoginController {
             return;
         }
 
-        var stage = login.getScene();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../main.fxml"));
-        stage.setRoot(loader.load());
+        login.getScene().setRoot(loader.get("main.fxml"));
     }
 }

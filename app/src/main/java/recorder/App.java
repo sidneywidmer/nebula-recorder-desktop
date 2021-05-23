@@ -2,36 +2,24 @@ package recorder;
 
 import com.google.inject.Guice;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import recorder.core.Loader;
 import recorder.providers.Bootstrap;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-
 public class App extends Application {
-
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         // Initialize DI
         var injector = Guice.createInjector(new Bootstrap());
-        FXMLLoader loader = injector.getInstance(FXMLLoader.class);
+        var loader = injector.getInstance(Loader.class);
 
-        // To start, show the login screen
-        try (InputStream fxmlInputStream = ClassLoader.getSystemResourceAsStream("recorder/login.fxml")) {
-            Parent parent = loader.load(fxmlInputStream);
-            stage.setScene(new Scene(parent));
-            stage.show();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        // Show the login view
+        stage.setScene(new Scene(loader.get("login.fxml")));
+        stage.show();
     }
 
     public static void main(String[] args) {
-        // 3..2..1.. LIFTOFF!
         launch(args);
     }
 }
