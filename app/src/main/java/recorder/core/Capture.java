@@ -1,15 +1,14 @@
-package recorder.backup;
+package recorder.core;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class Capture implements Runnable {
     protected Rectangle area;
     protected String store = "/home/lab/Desktop/tmp";
-    protected int interval = 100;
+    protected int interval = 25;
     private volatile boolean running = true;
 
     public Capture(Rectangle area) {
@@ -21,7 +20,7 @@ public class Capture implements Runnable {
         try {
             var rt = new Robot();
             while (running) {
-                BufferedImage img = rt.createScreenCapture(area);
+                var img = rt.createScreenCapture(area);
                 ImageIO.write(
                         img,
                         "jpeg",

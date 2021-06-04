@@ -8,6 +8,9 @@ import recorder.App;
 
 import java.io.IOException;
 
+/**
+ * Helper class to load new views and resolving the classes via our DI.
+ */
 public class Loader {
     private final FXMLLoader loader;
 

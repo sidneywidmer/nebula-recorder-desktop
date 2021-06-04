@@ -1,4 +1,4 @@
-package recorder.backup;
+package recorder.controllers;
 
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -15,12 +15,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 
-import javafx.application.Application;
+import recorder.core.Recorder;
 
 import java.awt.*;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
-class RecordingArea {
-    private final Application parent;
+class SelectAreaController {
 
     private Stage window;
     private StackPane root;
@@ -30,31 +31,19 @@ class RecordingArea {
     private Point currentDrag;
     private Point currentDragScreen;
 
-    public RecordingArea(Application parent) {
-        this.parent = parent;
-        setupGui();
-    }
-
     /**
      * Create a transparent window that overlay the whole screen. The user can then draw a rectangle
-     * on that Stage to select the area he want's to record.
+     * on that Stage to select the area he want's to record. We don't use a fxml file for this
+     * view since it doesn't have many elements and consists mostly of logic.
      */
-    protected void setupGui() {
+    protected void init() {
         Rectangle2D screen = Screen.getPrimary().getBounds();
 
         root = new StackPane();
         root.setAlignment(Pos.TOP_LEFT);
         root.setStyle("-fx-background-color: transparent;");
 
-        // Wee need something to click on to
-/*
-        Rectangle rectangle = new Rectangle(screen.getWidth(), screen.getHeight());
-        rectangle.setFill(new Color(1, 1, 1, 0.5));
-        root.getChildren().add(rectangle);
-*/
-
         Scene scene = new Scene(root, screen.getWidth(), screen.getHeight());
-        //scene.setFill(Color.TRANSPARENT);
         scene.setCursor(Cursor.CROSSHAIR);
         scene.setOnMousePressed(this::dragStart);
         scene.setOnMouseReleased(this::dragEnd);
@@ -97,6 +86,10 @@ class RecordingArea {
         area.setFrameFromDiagonal(currentDragScreen, point);
 
         var recorder = new Recorder(area);
-        recorder.start(2);
+        try {
+            recorder.start(10);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
