@@ -1,5 +1,6 @@
 package recorder.controllers;
 
+import com.google.inject.Inject;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -8,28 +9,26 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 
-import recorder.core.Recorder;
+import recorder.core.capture.Recorder;
+import recorder.core.capture.java.JavaRecorder;
 
 import java.awt.*;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 class SelectAreaController {
-
     private Stage window;
     private StackPane root;
     private Rectangle rect;
-    private Scale scale;
 
     private Point currentDrag;
     private Point currentDragScreen;
+
+    public Recorder currentRecording;
 
     /**
      * Create a transparent window that overlay the whole screen. The user can then draw a rectangle
@@ -79,17 +78,13 @@ class SelectAreaController {
     }
 
     private void dragEnd(MouseEvent event) {
-        window.hide();
+        window.close();
 
         var point = new Point((int) event.getScreenX(), (int) event.getScreenY());
         var area = new java.awt.Rectangle();
         area.setFrameFromDiagonal(currentDragScreen, point);
 
-        var recorder = new Recorder(area);
-        try {
-            recorder.start(10);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        currentRecording = new JavaRecorder(area);
+        System.out.println("Area selected");
     }
 }

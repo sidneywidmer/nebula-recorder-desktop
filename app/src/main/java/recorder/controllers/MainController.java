@@ -25,8 +25,12 @@ public class MainController {
     }
 
     public void startRecording(ActionEvent event) {
+        selectArea.currentRecording.start();
+        System.out.println("Start Recording");
     }
 
     public void stopRecording(ActionEvent event) {
+        selectArea.currentRecording.stop();
+        System.out.println("Stop Recording");
     }
 }
