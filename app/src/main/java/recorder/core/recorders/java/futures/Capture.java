@@ -1,6 +1,7 @@
-package recorder.core.capture.java.futures;
+package recorder.core.recorders.java.futures;
 
 import com.google.inject.Inject;
+import com.typesafe.config.Config;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,20 +13,16 @@ public class Capture implements Runnable {
     protected int interval = 25;
     private volatile boolean running = true;
 
-    @Inject
-    public Capture(Rectangle area) {
+    private Config config;
+
+    public Capture(Rectangle area, Config config) {
         this.area = area;
+        this.config = config;
     }
 
     @Override
     public void run() {
-        // How to inject config with a parameter?
-        // How to bind JavaRecorder to Recorder so we can just reference Recorder?
-        // How to record with ffmpeg?
-        //  - https://github.com/artclarke/humble-video
-        //  - ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0 output.mpg
-
-        var store = config.getString("paths.storage");
+        var store = config.getString("recorder.storage");
 
         try {
             var rt = new Robot();

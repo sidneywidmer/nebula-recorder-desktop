@@ -15,8 +15,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 
-import recorder.core.capture.Recorder;
-import recorder.core.capture.java.JavaRecorder;
+import recorder.core.recorders.CanRecord;
+import recorder.core.recorders.Recorder;
 
 import java.awt.*;
 
@@ -28,7 +28,12 @@ class SelectAreaController {
     private Point currentDrag;
     private Point currentDragScreen;
 
-    public Recorder currentRecording;
+    public Recorder recorder;
+
+    @Inject
+    public SelectAreaController(Recorder recorder) {
+        this.recorder = recorder;
+    }
 
     /**
      * Create a transparent window that overlay the whole screen. The user can then draw a rectangle
@@ -84,7 +89,7 @@ class SelectAreaController {
         var area = new java.awt.Rectangle();
         area.setFrameFromDiagonal(currentDragScreen, point);
 
-        currentRecording = new JavaRecorder(area);
+        recorder.setArea(area);
         System.out.println("Area selected");
     }
 }

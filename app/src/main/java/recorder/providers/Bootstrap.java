@@ -3,6 +3,7 @@ package recorder.providers;
 
 import com.google.inject.AbstractModule;
 import com.typesafe.config.Config;
+import recorder.core.recorders.Recorder;
 
 public class Bootstrap extends AbstractModule {
     /**
@@ -10,6 +11,7 @@ public class Bootstrap extends AbstractModule {
      */
     protected void configure() {
         bind(Config.class).toProvider(ConfigProvider.class);
+        bind(Recorder.class).toProvider(RecorderProvider.class);
     }
 }
 
