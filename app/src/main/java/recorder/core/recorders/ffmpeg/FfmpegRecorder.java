@@ -2,7 +2,6 @@ package recorder.core.recorders.ffmpeg;
 
 import com.github.kokorin.jaffree.ffmpeg.*;
 import com.typesafe.config.Config;
-import recorder.core.exceptions.RecorderException;
 import recorder.core.recorders.CanRecord;
 
 import java.awt.*;
@@ -24,9 +23,6 @@ public class FfmpegRecorder implements CanRecord {
 
     @Override
     public void start() {
-        if (1 == 1) {
-            throw new RecorderException("Foo Bar");
-        }
         var basePath = config.getString("recorder.storage");
         var filename = "recording-" + System.currentTimeMillis() + ".gif";
         var pathToVideo = Paths.get(basePath + "/" + filename);

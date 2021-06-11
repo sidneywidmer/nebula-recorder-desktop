@@ -1,5 +1,6 @@
 package recorder.core;
 
+import com.google.inject.Inject;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -9,8 +10,11 @@ import java.nio.file.Path;
 public class Auth {
     private final String configFile = ".nebula";
     private final String path;
+    private final NebulaApi nebulaApi;
 
-    public Auth() {
+    @Inject
+    public Auth(NebulaApi nebulaApi) {
+        this.nebulaApi = nebulaApi;
         path = System.getProperty("user.home") + "/" + configFile;
     }
 
@@ -25,5 +29,9 @@ public class Auth {
 
     public void saveToken(String token) throws IOException {
         Files.writeString(Path.of(path), token);
+    }
+
+    public boolean isValidToken(String token) {
+        return nebulaApi.check(token).isSuccessful();
     }
 }

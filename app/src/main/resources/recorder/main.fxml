@@ -4,11 +4,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="main" prefHeight="300.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="recorder.controllers.MainController">
+<AnchorPane fx:id="main" prefHeight="209.0" prefWidth="205.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="recorder.controllers.MainController">
     <children>
-      <Text layoutX="36.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Yay, logged in!" />
-      <Button fx:id="select" onAction="#selectArea" layoutX="36.0" layoutY="71.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="109.0" text="Select Area" />
-      <Button fx:id="start" onAction="#startRecording" layoutX="36.0" layoutY="101.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="109.0" text="Start Recording" />
-      <Button fx:id="stop" onAction="#stopRecording" layoutX="36.0" layoutY="131.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="109.0" text="End Recording" />
+      <Button fx:id="area" layoutX="48.0" layoutY="26.0" mnemonicParsing="false" onAction="#selectArea" prefHeight="23.0" prefWidth="109.0" text="Select Area" />
+      <Button fx:id="start" disable="true" layoutX="48.0" layoutY="56.0" mnemonicParsing="false" onAction="#startRecording" prefHeight="23.0" prefWidth="109.0" text="Start Recording" />
+      <Button fx:id="stop" disable="true" layoutX="48.0" layoutY="86.0" mnemonicParsing="false" onAction="#stopRecording" prefHeight="23.0" prefWidth="109.0" text="End Recording" />
+      <Text fx:id="info" layoutX="61.0" layoutY="130.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" visible="false" wrappingWidth="82.28271484375" />
     </children>
 </AnchorPane>

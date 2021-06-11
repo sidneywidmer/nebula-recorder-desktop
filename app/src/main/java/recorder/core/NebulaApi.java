@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.typesafe.config.Config;
 import okhttp3.*;
 import org.json.JSONObject;
+import recorder.core.exceptions.RecorderException;
 
 import java.io.IOException;
 
@@ -25,18 +26,40 @@ public class NebulaApi {
         return post(payload, "/api/auth/login");
     }
 
+    public Response check(String token) {
+        var payload = new JSONObject();
+        return get("/api/auth/check", token);
+    }
+
+    private Response get(String endpoint, String token) {
+        var request = new Request.Builder()
+                .url(config.getString("api.endpoint") + endpoint)
+                .get();
+
+        return request(request, token);
+    }
+
     private Response post(JSONObject payload, String endpoint) {
         var body = RequestBody.create(payload.toString(), JSON);
         var request = new Request.Builder()
                 .url(config.getString("api.endpoint") + endpoint)
-                .post(body)
-                .build();
+                .post(body);
+
+        return request(request, null);
+    }
+
+    private Response request(Request.Builder request, String token) {
+        if (token != null) {
+            request.header("Authorization", "Bearer " + token);
+        }
+
         Response response = null;
         try {
-            response = client.newCall(request).execute();
+            response = client.newCall(request.build()).execute();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RecorderException("Could not reach API server.");
         }
+
         return response;
     }
 }

@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import recorder.App;
+import recorder.core.exceptions.RecorderException;
 
 import java.io.IOException;
 
@@ -25,7 +26,7 @@ public class Loader {
         try {
             return loader.load(resource);
         } catch (IOException e) {
-            throw new NullPointerException("Invalid fxml file given.");
+            throw new RecorderException("IOException while loading fxml at " + fxml);
         }
     }
 }

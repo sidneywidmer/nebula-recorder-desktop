@@ -1,5 +1,8 @@
 package recorder.core.recorders;
 
+import org.greenrobot.eventbus.EventBus;
+import recorder.events.AreaSelectedEvent;
+
 import java.awt.*;
 
 public class Recorder implements CanRecord {
@@ -14,6 +17,7 @@ public class Recorder implements CanRecord {
     @Override
     public void setArea(Rectangle area) {
         implementation.setArea(area);
+        EventBus.getDefault().post(new AreaSelectedEvent(area));
     }
 
     @Override
