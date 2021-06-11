@@ -1,5 +1,6 @@
 package recorder.controllers;
 
+import com.github.kokorin.jaffree.ffmpeg.FFmpegStopper;
 import com.google.inject.Inject;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -15,7 +16,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 
-import recorder.core.recorders.CanRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import recorder.core.recorders.Recorder;
 
 import java.awt.*;
@@ -29,6 +31,8 @@ class SelectAreaController {
     private Point currentDragScreen;
 
     public Recorder recorder;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SelectAreaController.class);
 
     @Inject
     public SelectAreaController(Recorder recorder) {
@@ -90,6 +94,6 @@ class SelectAreaController {
         area.setFrameFromDiagonal(currentDragScreen, point);
 
         recorder.setArea(area);
-        System.out.println("Area selected");
+        LOGGER.info("Area selected");
     }
 }

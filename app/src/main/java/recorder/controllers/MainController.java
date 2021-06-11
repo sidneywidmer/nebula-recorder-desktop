@@ -4,9 +4,13 @@ import com.google.inject.Inject;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainController {
     private final SelectAreaController selectArea;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     @FXML
     private Button start;
@@ -26,11 +30,11 @@ public class MainController {
 
     public void startRecording(ActionEvent event) {
         selectArea.recorder.start();
-        System.out.println("Start Recording");
+        LOGGER.info("Start Recording");
     }
 
     public void stopRecording(ActionEvent event) {
         selectArea.recorder.stop();
-        System.out.println("Stop Recording");
+        LOGGER.info("Stop Recording");
     }
 }

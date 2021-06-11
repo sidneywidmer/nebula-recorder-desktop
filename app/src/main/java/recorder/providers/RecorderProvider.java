@@ -24,6 +24,10 @@ public class RecorderProvider implements Provider<Recorder> {
      */
     @Override
     public Recorder get() {
-        return new Recorder(new FfmpegRecorder(config));
+        if (config.getString("recorder.implementation").equals("ffmpeg")) {
+            return new Recorder(new FfmpegRecorder(config));
+        }
+
+        return new Recorder(new JavaRecorder(config));
     }
 }
