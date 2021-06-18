@@ -7,6 +7,10 @@ import org.json.JSONObject;
 import recorder.core.exceptions.RecorderException;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Super minimalist nebula api client with a lot of potential improvements :)
@@ -19,7 +23,10 @@ public class NebulaApi {
     @Inject
     public NebulaApi(Config config) {
         this.config = config;
-        client = new OkHttpClient().newBuilder().build();
+        client = new OkHttpClient()
+                .newBuilder()
+                .callTimeout(60, TimeUnit.SECONDS)
+                .build();
     }
 
     public Response login(JSONObject payload) {
@@ -31,6 +38,18 @@ public class NebulaApi {
         return get("/api/auth/check", token);
     }
 
+    public Response upload(Path recording, String token) throws IOException {
+        var file = Files.readAllBytes(recording);
+
+        var payload = new JSONObject()
+                .put("name", recording.getFileName())
+                .put("description", "")
+                .put("type", "GIF")
+                .put("recording", Base64.getEncoder().encode(file));
+
+        return post(payload, "/api/recording/upload", token);
+    }
+
     private Response get(String endpoint, String token) {
         var request = new Request.Builder()
                 .url(config.getString("api.endpoint") + endpoint)
@@ -40,12 +59,16 @@ public class NebulaApi {
     }
 
     private Response post(JSONObject payload, String endpoint) {
+        return post(payload, endpoint, null);
+    }
+
+    private Response post(JSONObject payload, String endpoint, String token) {
         var body = RequestBody.create(payload.toString(), JSON);
         var request = new Request.Builder()
                 .url(config.getString("api.endpoint") + endpoint)
                 .post(body);
 
-        return request(request, null);
+        return request(request, token);
     }
 
     private Response request(Request.Builder request, String token) {

@@ -9,11 +9,17 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import recorder.core.Auth;
+import recorder.core.NebulaApi;
 import recorder.core.Stopwatch;
 import recorder.events.AreaSelectedEvent;
 
+import java.io.IOException;
+
 public class MainController {
     private final SelectAreaController selectArea;
+    private final NebulaApi nebula;
+    private final Auth auth;
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private Stopwatch stopwatch;
 
@@ -27,8 +33,11 @@ public class MainController {
     private Text info;
 
     @Inject
-    public MainController(SelectAreaController selectArea) {
+    public MainController(SelectAreaController selectArea, NebulaApi nebula, Auth auth) {
         this.selectArea = selectArea;
+        this.nebula = nebula;
+        this.auth = auth;
+
         EventBus.getDefault().register(this);
     }
 
@@ -57,14 +66,21 @@ public class MainController {
      * could record the same area twice.
      */
     public void stopRecording(ActionEvent event) {
-        selectArea.recorder.stop();
+        var newRecording = selectArea.recorder.stop();
 
         area.setDisable(false);
         start.setDisable(false);
         stop.setDisable(true);
 
         stopwatch.stop();
+        info.setText("Uploading...");
 
+        try {
+            var response = nebula.upload(newRecording, auth.getToken());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        info.setText("Upload complete.");
         LOGGER.info("Stop Recording");
     }
 

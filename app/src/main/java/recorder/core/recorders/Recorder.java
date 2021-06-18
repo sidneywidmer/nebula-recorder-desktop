@@ -4,6 +4,7 @@ import org.greenrobot.eventbus.EventBus;
 import recorder.events.AreaSelectedEvent;
 
 import java.awt.*;
+import java.nio.file.Path;
 
 public class Recorder implements CanRecord {
     private final CanRecord implementation;
@@ -26,7 +27,7 @@ public class Recorder implements CanRecord {
     }
 
     @Override
-    public void stop() {
-        implementation.stop();
+    public Path stop() {
+        return implementation.stop();
     }
 }

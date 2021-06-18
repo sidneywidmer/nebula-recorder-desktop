@@ -5,12 +5,14 @@ import com.typesafe.config.Config;
 import recorder.core.recorders.CanRecord;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class FfmpegRecorder implements CanRecord {
     private final Config config;
     private Rectangle area;
     private FFmpegResultFuture current;
+    private Path currentVideoFile;
 
     public FfmpegRecorder(Config config) {
         this.config = config;
@@ -25,7 +27,7 @@ public class FfmpegRecorder implements CanRecord {
     public void start() {
         var basePath = config.getString("recorder.storage");
         var filename = "recording-" + System.currentTimeMillis() + ".gif";
-        var pathToVideo = Paths.get(basePath + "/" + filename);
+        currentVideoFile = Paths.get(basePath + "/" + filename);
 
         var capture = CaptureInput
                 .captureDesktop()
@@ -34,7 +36,7 @@ public class FfmpegRecorder implements CanRecord {
                 .setCaptureVideoOffset(area.x, area.y)
                 .setCaptureVideoSize(area.width, area.height);
 
-        var output = UrlOutput.toPath(pathToVideo);
+        var output = UrlOutput.toPath(currentVideoFile);
 
         current = FFmpeg.atPath()
                 .addInput(capture)
@@ -44,8 +46,9 @@ public class FfmpegRecorder implements CanRecord {
     }
 
     @Override
-    public void stop() {
+    public Path stop() {
         // 1. Return file path on stop
         current.graceStop();
+        return currentVideoFile;
     }
 }

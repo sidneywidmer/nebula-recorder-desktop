@@ -2,6 +2,7 @@ package recorder.core.recorders.java.futures;
 
 import com.typesafe.config.Config;
 import recorder.core.GifSequenceWriter;
+import recorder.core.exceptions.RecorderException;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
@@ -25,7 +26,7 @@ public class ConvertToGif implements Runnable {
         try {
             var store = config.getString("recorder.storage");
             var extensionFilter = new FileNameExtensionFilter("N/A", "jpeg");
-            var output = new FileImageOutputStream(new File(store + "/final_" + System.currentTimeMillis() + ".gif"));
+            var output = new FileImageOutputStream(new File(store + "/recording.gif"));
             var writer = new GifSequenceWriter(output, TYPE_3BYTE_BGR, 50, false);
             var file = new File(store);
             var files = file.listFiles();
@@ -42,6 +43,7 @@ public class ConvertToGif implements Runnable {
             writer.close();
             output.close();
         } catch (IOException ignored) {
+            throw new RecorderException("Could not convert stills to gif.");
         }
     }
 }
