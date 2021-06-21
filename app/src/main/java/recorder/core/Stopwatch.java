@@ -29,7 +29,6 @@ public class Stopwatch {
     public void stop() {
         timeline.stop();
         time = LocalTime.parse("00:00");
-        label.setText("Finished.");
     }
 
     private void incrementTime() {

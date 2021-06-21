@@ -6,6 +6,7 @@ import okhttp3.*;
 import org.json.JSONObject;
 import recorder.core.exceptions.RecorderException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,16 +39,22 @@ public class NebulaApi {
         return get("/api/auth/check", token);
     }
 
-    public Response upload(Path recording, String token) throws IOException {
-        var file = Files.readAllBytes(recording);
+    public Response upload(Path recording, String token) {
+        var file = RequestBody.create(recording.toFile(), MediaType.parse("multipart/form-data"));
 
-        var payload = new JSONObject()
-                .put("name", recording.getFileName())
-                .put("description", "")
-                .put("type", "GIF")
-                .put("recording", Base64.getEncoder().encode(file));
+        var body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("name", recording.getFileName().toString())
+                .addFormDataPart("description", "")
+                .addFormDataPart("type", "GIF")
+                .addFormDataPart("recording", recording.getFileName().toString(), file)
+                .build();
 
-        return post(payload, "/api/recording/upload", token);
+        var request = new Request.Builder()
+                .url(config.getString("api.endpoint") + "/api/recording/upload")
+                .method("POST", body);
+
+        return request(request, token);
     }
 
     private Response get(String endpoint, String token) {

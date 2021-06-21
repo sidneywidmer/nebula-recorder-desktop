@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import recorder.core.Auth;
 import recorder.core.NebulaApi;
 import recorder.core.Stopwatch;
+import recorder.core.exceptions.RecorderException;
 import recorder.events.AreaSelectedEvent;
 
 import java.io.IOException;
@@ -67,20 +68,27 @@ public class MainController {
      */
     public void stopRecording(ActionEvent event) {
         var newRecording = selectArea.recorder.stop();
+        stopwatch.stop();
+
+        // Fmpeg needs a sec on the filesystem to finish the output stream...
+        try {
+            info.setText("Finalizing...");
+            Thread.sleep(1_000);
+        } catch (InterruptedException ignored) {
+        }
 
         area.setDisable(false);
         start.setDisable(false);
         stop.setDisable(true);
 
-        stopwatch.stop();
         info.setText("Uploading...");
 
         try {
             var response = nebula.upload(newRecording, auth.getToken());
-        } catch (IOException e) {
-            e.printStackTrace();
+            info.setText("Upload complete.");
+        } catch (RecorderException e) {
+            info.setText("Upload failed.");
         }
-        info.setText("Upload complete.");
         LOGGER.info("Stop Recording");
     }
 
