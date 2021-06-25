@@ -6,11 +6,8 @@ import okhttp3.*;
 import org.json.JSONObject;
 import recorder.core.exceptions.RecorderException;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**

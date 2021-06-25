@@ -8,14 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Auth {
-    private final String configFile = ".nebula";
     private final String path;
     private final NebulaApi nebulaApi;
 
     @Inject
     public Auth(NebulaApi nebulaApi) {
         this.nebulaApi = nebulaApi;
-        path = System.getProperty("user.home") + "/" + configFile;
+        path = System.getProperty("user.home") + "/.nebula";
     }
 
     public String getToken() {
