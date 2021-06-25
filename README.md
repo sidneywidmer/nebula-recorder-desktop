@@ -7,8 +7,13 @@ This is the desktop component of the Nebular Recorder project.
 The project uses Java 16 and JavaFX
 
 - Clone repository
-- `gradle run` 
-- Profit
+- Install ffmpeg (best done with choco https://community.chocolatey.org/packages/ffmpeg)
+- Copy the `main/resources/app.example.conf` to `main/resources/app.conf`
+  - set the `endpoint` either to your local server or to `https://nebula.sidney.dev` 
+  - set the `storage` to some writable directory, eg `C:\\tmp`
+  - set the `implementation` to `ffmpeg` 
+- `gradle run`
+- You should then see the GUI where you can login, if you don't have an account create one on the server you provided as `endpoint`
 
 ### Linux
 
