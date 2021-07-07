@@ -4,11 +4,14 @@ import com.google.inject.Guice;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import recorder.core.Auth;
 import recorder.core.Loader;
 import recorder.core.exceptions.RecorderException;
+import recorder.events.OpenDocumentEvent;
 import recorder.providers.Bootstrap;
 
 public class App extends Application {
@@ -16,6 +19,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        EventBus.getDefault().register(this);
         Thread.setDefaultUncaughtExceptionHandler(App::errorHandler);
 
         // Initialize DI
@@ -31,6 +35,15 @@ public class App extends Application {
             stage.setScene(new Scene(loader.get("login.fxml")));
         }
         stage.show();
+    }
+
+    /**
+     * Easy way for controllers to just trigger an event which then our Application can open. Host services
+     * is not available in controllers.
+     */
+    @Subscribe
+    public void onOpenDocument(OpenDocumentEvent event) {
+        getHostServices().showDocument(event.getPath());
     }
 
     /**

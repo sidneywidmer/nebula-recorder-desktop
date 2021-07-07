@@ -1,9 +1,13 @@
 package recorder.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.typesafe.config.Config;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Tooltip;
 import javafx.scene.text.Text;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -14,13 +18,16 @@ import recorder.core.NebulaApi;
 import recorder.core.Stopwatch;
 import recorder.core.exceptions.RecorderException;
 import recorder.events.AreaSelectedEvent;
+import recorder.events.OpenDocumentEvent;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class MainController {
     private final SelectAreaController selectArea;
     private final NebulaApi nebula;
     private final Auth auth;
+    private final Config config;
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private Stopwatch stopwatch;
 
@@ -32,14 +39,24 @@ public class MainController {
     private Button area;
     @FXML
     private Text info;
+    @FXML
+    private Hyperlink link;
 
     @Inject
-    public MainController(SelectAreaController selectArea, NebulaApi nebula, Auth auth) {
+    public MainController(SelectAreaController selectArea, NebulaApi nebula, Auth auth, Config config) {
         this.selectArea = selectArea;
         this.nebula = nebula;
         this.auth = auth;
+        this.config = config;
 
         EventBus.getDefault().register(this);
+    }
+
+    protected void registerLinkHandler(Hyperlink link) {
+        link.setOnAction((ActionEvent event) -> {
+            EventBus.getDefault().post(new OpenDocumentEvent(link.getTooltip().getText()));
+            event.consume();
+        });
     }
 
     public void selectArea(ActionEvent event) {
@@ -66,7 +83,7 @@ public class MainController {
      * start button is still active because we still know the selected area and a user
      * could record the same area twice.
      */
-    public void stopRecording(ActionEvent event) {
+    public void stopRecording(ActionEvent event) throws IOException {
         var newRecording = selectArea.recorder.stop();
         stopwatch.stop();
 
@@ -85,7 +102,13 @@ public class MainController {
 
         try {
             var response = nebula.upload(newRecording, auth.getToken());
-            info.setText("Upload complete.");
+            var parsedResponse = new ObjectMapper().readValue(response.body().string(), HashMap.class);
+            info.setVisible(false);
+
+            link.setVisible(true);
+            link.setTooltip(new Tooltip(config.getString("api.endpoint") + parsedResponse.get("url")));
+            link.setText("Recording anzeigen");
+            registerLinkHandler(link);
         } catch (RecorderException e) {
             info.setText("Upload failed.");
         }
