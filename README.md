@@ -33,9 +33,5 @@ Authentication is done with the JWT token issued from an api endpoint. Once the 
 
 There are two recording strategies: `java` and `ffmpeg`. The first one failed miserably because of a two large overhead javas `Robot` class uses when capturing the pixels for the desktop. To avoid theses issues we're relying on the ffmpeg binary that the user has to preinstall on its machine. The strategy can be chosen in the app.conf file.
 
-### Upload
-
-We're accepting a 30% filesize increase because we're uploading the the recording as base64 encoded string. The reason is, that the validation for json bodies was already in place on the server and we wanted to avoid to waste too much time on the correct implementation of a `form/multipart` upload and validation system. 
-
 
 
