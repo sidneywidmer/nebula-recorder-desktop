@@ -124,6 +124,7 @@ public class MainController {
 
         start.setDisable(false);
 
+        this.link.setVisible(false);
         this.info.setVisible(true);
         this.info.setText("Currently selected area: " + area.width + "x" + area.height);
     }
